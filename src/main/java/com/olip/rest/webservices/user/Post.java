@@ -1,5 +1,6 @@
 package com.olip.rest.webservices.user;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,6 +15,7 @@ public class Post {
     private Integer id;
     private String description;
     @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnore
     private  User user;
 
     public Post() {
