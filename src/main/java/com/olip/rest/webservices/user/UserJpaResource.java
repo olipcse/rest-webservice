@@ -19,10 +19,12 @@ public class UserJpaResource {
 
   private final UserDaoService userDaoService;
   private final UserRepository userRepository;
+  private final PostRepository postRepository;
 
-    public UserJpaResource(UserDaoService userDaoService,UserRepository userRepository) {
+    public UserJpaResource(UserDaoService userDaoService,UserRepository userRepository, PostRepository postRepository) {
         this.userDaoService = userDaoService;
         this.userRepository =userRepository;
+        this.postRepository =postRepository;
     }
 
     @GetMapping("jpa/users")
@@ -63,6 +65,32 @@ public class UserJpaResource {
     public void deleteUser(@PathVariable Integer id){
         userRepository.deleteById(id);
 
+
+    }
+    @GetMapping("jpa/users/{id}/posts")
+    public List<Post> getAllPost(@PathVariable Integer id){
+        Optional<User> user =userRepository.findById(id);
+
+        if(user.isEmpty()){
+            throw new UserNotFoundException("id"+id);
+        }
+
+        return user.get().getPosts();
+    }
+    @PostMapping("jpa/users/{id}/posts")
+    public ResponseEntity<Object> createPost(@PathVariable Integer id,@RequestBody Post post){
+        Optional<User> user =userRepository.findById(id);
+
+        if(user.isEmpty()){
+            throw new UserNotFoundException("id"+id);
+        }
+        post.setUser(user.get());
+        postRepository.save(post);
+        URI location =  ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(post.getId())
+                .toUri();
+        return ResponseEntity.created(location).build();
 
     }
 }
