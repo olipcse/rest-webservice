@@ -49,7 +49,7 @@ public class UserJpaResource {
 //        user.setId(null);
 //        user.setName("Olip");
 //        user.setBirthDate(new Date());
-       User savedUser= userDaoService.save(user);
+       User savedUser= userRepository.save(user);
        URI location =  ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
                 .buildAndExpand(savedUser.getId())
@@ -60,11 +60,9 @@ public class UserJpaResource {
 
     }
     @DeleteMapping("jpa/users/{id}")
-    public void deleteUser(@PathVariable int id){
-        User user = userDaoService.deleteById(id);
+    public void deleteUser(@PathVariable Integer id){
+        userRepository.deleteById(id);
 
-        if(user==null){
-            throw  new UserNotFoundException("id-"+id);
-        }
+
     }
 }
